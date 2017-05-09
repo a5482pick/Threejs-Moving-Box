@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <body onload = "init()">
+        
+        <div id="container"></div>
+
+        <script src="three.js"></script>
+        <script src="OrbitControls.js"></script>
+        <script>
+
+            var camera;
+            var scene;
+            var renderer;
+            var cubeGeometry;
+            var edges;
+            var line;
+            var k = 0;
+            var then;
+            var now;
+            var delta;
+            var interval = 100;   //Increase this time interval (ms) to slow the automatic motion.
+
+            function init() {      //Initialize the scene and camera.
+
+                renderer = new THREE.WebGLRenderer({antialias: true});
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+                document.getElementById("container").appendChild(renderer.domElement);
+
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000);
+                camera.position.set(200.0, 200.0, 200.0);
+                camera.lookAt(scene.position)
+            
+                scene.add(camera);
+   
+                controls = new THREE.OrbitControls( camera );  //Allow motion control using the mouse.
+            }
+
+
+            then = Date.now();
+            animate();
+
+            function animate() {        //Perform the animation, newly creating the box each time.
+
+                now = Date.now();
+                delta = now - then;
+
+                if (delta > interval)  {  //This is to control the speed of the box across the screen.
+
+                    cubeGeometry = new THREE.BoxGeometry(160, 80, 80);  //Create the box.
+
+                    cubeGeometry.translate(-k,0,0);  //Move k pixels across on each renewal.
+
+                    edges = new THREE.EdgesGeometry( cubeGeometry);
+                
+                    line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+                
+                    scene.add( line );
+                    renderer.render( scene, camera );
+                    scene.remove(line);
+
+                    then = now -(delta % interval);
+
+                    k++;   //Increase the translation distance by 1 pixel more each time.
+                }
+
+                requestAnimationFrame( animate );
+            }
+
+        </script>
+    </body>
+</html>
