@@ -12,6 +12,7 @@
             var scene;
             var renderer;
             var cubeGeometry;
+            var mesh;
             var edges;
             var line;
             var k = 0;
@@ -19,6 +20,7 @@
             var now;
             var delta;
             var interval = 1000/60;   //Increase this time interval (ms) to slow the automatic motion.
+
 
             function init() {      //Initialize the scene and camera.
 
@@ -36,7 +38,20 @@
                 scene.add(camera);
    
                 controls = new THREE.OrbitControls( camera );  //Allow motion control using the mouse.
+
+                cubeGeometry = new THREE.BoxGeometry(160, 80, 80);  //Create the box.
+
+                mesh = new THREE.Mesh(cubeGeometry);
+
+                edges = new THREE.EdgesGeometry(cubeGeometry);
+
+                line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+
+                mesh.add(line);    //Package the structure.
+
+                scene.add(mesh);
             }
+
 
 
             then = Date.now();
@@ -44,26 +59,27 @@
 
             function animate() {        //Perform the animation, newly creating the box each time.
 
+
                 now = Date.now();
                 delta = now - then;
 
+
                 if (delta > interval)  {  //This is to control the speed of the box across the screen.
 
-                    cubeGeometry = new THREE.BoxGeometry(160, 80, 80);  //Create the box.
+                    mesh.translateX(0.6);   //Increment distance by 1 unit.
 
-                    cubeGeometry.translate(-k,0,0);  //Move k pixels across on each instantiation.
 
-                    edges = new THREE.EdgesGeometry( cubeGeometry);
-                
-                    line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
-                
-                    scene.add( line );
+                    if (k > 49.5 && k < 50.5) { 
+               
+                        alert(mesh.position.x); //Alert position when 50 iterations are attained.
+                    } 
+
+
                     renderer.render( scene, camera );
-                    scene.remove(line);
 
                     then = now -(delta % interval);
 
-                    k++;   //Increase the translation distance by 1 pixel more each time.
+                    k++;
                 }
 
                 requestAnimationFrame( animate );
