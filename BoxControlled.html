@@ -13,7 +13,7 @@
             var renderer;
             var cubeGeometry;
             var edges;
-            var line;
+            var line = null;
             var k = 0;
             var then;
             var now;
@@ -49,6 +49,9 @@
 
                 if (delta > interval)  {  //This is to control the speed of the box across the screen.
 
+                    //Remove the previously rendered lines.
+                    if (line) {  scene.remove(line);  }
+
                     cubeGeometry = new THREE.BoxGeometry(160, 80, 80);  //Create the box.
 
                     cubeGeometry.translate(-k,0,0);  //Move k pixels across on each instantiation.
@@ -59,7 +62,6 @@
                 
                     scene.add( line );
                     renderer.render( scene, camera );
-                    scene.remove(line);
 
                     then = now -(delta % interval);
 
